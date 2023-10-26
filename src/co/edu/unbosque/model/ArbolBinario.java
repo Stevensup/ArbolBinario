@@ -24,6 +24,69 @@ public class ArbolBinario extends Arbol {
 
         return raiz;
     }
+    
+    public boolean eliminar(int dato) {
+        if (raiz == null) {
+            return false; 
+        } else {
+           
+            Nodo padre = null;
+            return eliminarRec(raiz, dato, padre);
+        }
+    }
+
+    private boolean eliminarRec(Nodo nodo, int dato, Nodo padre) {
+        if (nodo == null) {
+            return false; 
+        }
+
+        if (dato < nodo.valorNodo()) {
+            return eliminarRec(nodo.getHojaIzquierda(), dato, nodo);
+        } else if (dato > nodo.valorNodo()) {
+            return eliminarRec(nodo.getHojaDerecha(), dato, nodo);
+        } else {
+           
+            if (nodo.getHojaIzquierda() == null && nodo.getHojaDerecha() == null) {
+                
+                if (padre != null) {
+                    if (padre.getHojaIzquierda() == nodo) {
+                        padre.setHojaIzquierda(null);
+                    } else {
+                        padre.setHojaDerecha(null);
+                    }
+                } else {
+                    raiz = null; 
+                }
+            } else if (nodo.getHojaIzquierda() == null || nodo.getHojaDerecha() == null) {
+               
+                Nodo hijo = (nodo.getHojaIzquierda() != null) ? nodo.getHojaIzquierda() : nodo.getHojaDerecha();
+                if (padre != null) {
+                    if (padre.getHojaIzquierda() == nodo) {
+                        padre.setHojaIzquierda(hijo);
+                    } else {
+                        padre.setHojaDerecha(hijo);
+                    }
+                } else {
+                    raiz = hijo;
+                }
+            } else {
+                
+                Nodo sucesor = obtenerSucesor(nodo.getHojaDerecha());
+                nodo.setDato(sucesor.valorNodo());
+                eliminarRec(nodo.getHojaDerecha(), sucesor.valorNodo(), nodo);
+            }
+            return true; 
+        }
+    }
+
+    private Nodo obtenerSucesor(Nodo nodo) {
+        Nodo sucesor = nodo;
+        while (sucesor.getHojaIzquierda() != null) {
+            sucesor = sucesor.getHojaIzquierda();
+        }
+        return sucesor;
+    }
+
 
     public boolean buscar(int dato) {
         return buscarRec(raiz, dato);
